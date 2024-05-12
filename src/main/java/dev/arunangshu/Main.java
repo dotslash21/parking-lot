@@ -1,19 +1,36 @@
 package dev.arunangshu;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import dev.arunangshu.enums.VehicleType;
+import dev.arunangshu.models.*;
+import dev.arunangshu.models.manager.ParkingSpotManagerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
-
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
-
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+        // Initialize parking spots
+        List<ParkingSpot> spots = new ArrayList<>();
+        for (int i = 1; i <= 100; ++i) {
+            if (i <= 50)
+                spots.add(new ParkingSpot(i, 10));
+            else
+                spots.add(new ParkingSpot(i, 20));
         }
+
+        // Create ParkingSpotManagerFactory
+        ParkingSpotManagerFactory factory = new ParkingSpotManagerFactory();
+
+        // Create EntranceGate and ExitGate objects
+        EntranceGate entranceGate = new EntranceGate(factory);
+        ExitGate exitGate = new ExitGate(factory);
+
+        // Example usage
+        Vehicle vehicle = new Vehicle(123, VehicleType.TWO_WHEELER);
+        ParkingSpot spot = entranceGate.findParkingSpace(vehicle.type(), spots);
+        Ticket ticket = entranceGate.generateTicket(vehicle, spot);
+
+        // Vehicle leaves
+        exitGate.removeVehicle(ticket);
     }
 }
