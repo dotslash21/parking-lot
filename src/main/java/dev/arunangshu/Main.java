@@ -1,19 +1,98 @@
 package dev.arunangshu;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import dev.arunangshu.enums.VehicleType;
+import dev.arunangshu.models.lot.ParkingLot;
+
+import java.util.Scanner;
+
 public class Main {
-    public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
 
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+    public static void inputLoop() {
+        Scanner scanner = new Scanner(System.in);
 
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+        ParkingLot parkingLot = null;
+
+        boolean continueLoop = true;
+        while (continueLoop) {
+            String command = scanner.next();
+            switch (command) {
+                case "create_parking_lot": {
+                    String parkingLotId = scanner.next();
+                    int numFloors = scanner.nextInt();
+                    int numSlotsPerFloor = scanner.nextInt();
+                    if (parkingLot != null) {
+                        System.out.println("Parking lot already exists!");
+                        break;
+                    }
+                    parkingLot = new ParkingLot(parkingLotId, numFloors, numSlotsPerFloor);
+                    break;
+                }
+
+                case "park_vehicle": {
+                    if (parkingLot == null) {
+                        System.out.println("Parking lot does not exist!");
+                        break;
+                    }
+                    VehicleType vehicleType = VehicleType.valueOf(scanner.next());
+                    String vehicleRegistrationNumber = scanner.next();
+                    String vehicleColor = scanner.next();
+                    parkingLot.getParkingManager().parkVehicle(vehicleType, vehicleRegistrationNumber, vehicleColor);
+                    break;
+                }
+
+                case "unpark_vehicle": {
+                    if (parkingLot == null) {
+                        System.out.println("Parking lot does not exist!");
+                        break;
+                    }
+                    String registrationNumber = scanner.next();
+                    parkingLot.getParkingManager().unparkVehicle(registrationNumber);
+                    break;
+                }
+
+                case "display": {
+                    if (parkingLot == null) {
+                        System.out.println("Parking lot does not exist!");
+                        break;
+                    }
+                    String displayType = scanner.next();
+                    switch (displayType) {
+                        case "free_count": {
+                            VehicleType vehicleType = VehicleType.valueOf(scanner.next());
+                            parkingLot.displayFreeSlotsCount(vehicleType);
+                            break;
+                        }
+
+                        case "free_slots": {
+                            VehicleType vehicleType = VehicleType.valueOf(scanner.next());
+                            parkingLot.displayFreeSlots(vehicleType);
+                            break;
+                        }
+
+                        case "occupied_slots": {
+                            VehicleType vehicleType = VehicleType.valueOf(scanner.next());
+                            parkingLot.displayOccupiedSlots(vehicleType);
+                            break;
+                        }
+
+                        default:
+                            System.out.println("Incorrect display type provided!");
+                    }
+                    break;
+                }
+
+                case "exit":
+                    continueLoop = false;
+                    break;
+
+                default:
+                    System.out.println("Incorrect command provided!");
+            }
+            scanner.nextLine();
         }
+    }
+
+    public static void main(String[] args) {
+        inputLoop();
     }
 }
